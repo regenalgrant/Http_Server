@@ -78,11 +78,33 @@ def response_ok(body, req_type):
     return response
 
 
-def response_error(req_type):
+def response_err(req_type):
     response = response_template()
     response[0] = response_check(req_type)
     response[4] = response_check(req_type)
     return response
+
+def resolve_uri(uri, path='..'):
+    """
+    returns a body and type based on uri as a tuple
+    """
+    path_to_root = os.path.join(path, 'webroot', uri[1:])
+    print("path to root: ", path_to_root)
+    file_type = ""
+    if os.path.isfile(path_to_root):
+        print("is a file")
+        filepath = io.open(path_to_root, 'rb')
+        print("filepath :", filepath)
+        body = filepath.read()
+        print("body", body)
+        file_type = mimetypes.guess_type(uri)
+        print("file_type :", file_type[0])
+        filepath.close()
+        return body, file_type[0]
+    elif os.path.isdir(path_to_root):
+        print("is a directory", path_to_root)
+        return build_file_structre_html(path_to_root), file_type
+    else:
 
 
 def send_response(conn, response):
@@ -98,7 +120,7 @@ def server():
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP,)
         print("\nserver: ", server_socket)
 
-        address = ('127.0.0.1', 5001)
+        address = ('127.0.0.1', 5000)
         server_socket.bind(address)
         print("\nserver: ", server_socket)
 
@@ -150,5 +172,5 @@ def server():
             print('server closed')
 
 
-if __name__ == '__main__':
-    server()
+    if __name__ == '__main__':
+        server()
