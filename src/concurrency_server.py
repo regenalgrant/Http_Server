@@ -37,3 +37,19 @@ def response_check(error):
         "500": u"HTTP/1.1 500 Internal Server Error\r\n",
         "505": u"HTTP/1.1 505 HTTP Version Not Supported\r\n",
     }
+    return response_dict[error]
+
+
+def parse_request(request):
+    split_request = request.split('\r\n')
+    request_list = split_request[0].split(' ')
+    if request_list[0] == 'GET':
+        if request_list[2] == 'HTTP/1.1':
+            if 'Host: 127.0.0.1:' in split_request[1]:
+                return request_list[1]
+            else:
+                raise ValueError # 400
+        else:
+            raise TypeError # 505
+    else:
+        raise NameError # 405
