@@ -74,3 +74,10 @@ def response_ok(body, req_type):
     response[2] = u"Content-type: " + req_type + "; charset=utf-8\r\n"
     response[4] = body
     return response
+
+
+def response_err(req_type):
+    response = response_template()
+    response[0] = response_check(req_type)
+    response[4] = response_check(req_type)
+    return response
