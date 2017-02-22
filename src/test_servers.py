@@ -47,11 +47,11 @@ def test_response_check(error, response):
     assert response_check(error) == response
 
 
-# CLIENT_MESSAGES = [
-#     (u"SET / HTTP/1.1\r\nHost: localhost:5000", NameError),
-#     (u"GET / HTTP/1.0\r\nHost: localhost:5000", TypeError),
-#     (u"GET / HTTP/1.1\r\nNo Host", ValueError)
-# ]
+CLIENT_MESSAGES = [
+    (u"SET / HTTP/1.1\r\nHost: localhost:5000", NameError),
+    (u"GET / HTTP/1.0\r\nHost: localhost:5000", TypeError),
+    (u"GET / HTTP/1.1\r\nNo Host", ValueError)
+]
 
 
 @pytest.mark.parametrize("error, response", CLIENT_MESSAGES)

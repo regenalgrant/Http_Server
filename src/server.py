@@ -22,11 +22,16 @@ def build_file_structre_html(directory):
 
 
 def response_template():
-    return [u"",
-            u"" + str("Date: " + email.utils.formatdate(usegmt=True) + "\r\n"),
-            u"Content-type: text/html; charset=utf-8\r\n",
-            u"Content-length: \r\n\r\n",
-            u"Body: "]
+    lines = [
+        b"",
+        b"Date: " + email.utils.formatdate(usegmt=True).encode('utf8'),
+        b"Content-type: text/html; charset=utf-8",
+        b"Content-length: ",
+        b"",
+    ]
+    # conn.sendall(b"\r\n".join(lines))
+    return lines
+
 
 
 def response_check(error):
