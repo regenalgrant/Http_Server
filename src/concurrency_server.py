@@ -111,3 +111,36 @@ def send_response(conn, response):
             conn.send(c.encode('utf-8'))
         else:
             conn.send(c)
+
+def server(conn, address):
+    try:
+        while True:
+            # listen on socket
+            client_request = handle_listening(conn)
+            print(client_request)
+            try:
+                uri = parse_request(client_request)
+                print('parsed uri: ', uri)
+            except ValueError:
+                client_response = response_err("400")
+            except TypeError:
+                client_response = response_err("505")
+            except NameError:
+                client_response = response_err("405")
+            try:
+                body, file_type = resolve_uri(uri)
+                print("body :", body)
+                print("file_type :", file_type)
+                client_response = response_ok(body, file_type)
+            except OSError:
+                client_response = response_err("404")
+            send_response(conn, client_response) # Send the message
+            conn.close()
+            break
+    except KeyboardInterrupt:
+        if conn is not None:
+            conn.close()
+        print('connection closed')
+    finally:
+        server_socket.close()
+        print('server closed')
