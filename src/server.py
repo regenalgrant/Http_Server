@@ -84,6 +84,7 @@ def response_err(req_type):
     response[4] = response_check(req_type)
     return response
 
+
 def resolve_uri(uri, path='..'):
     """
     returns a body and type based on uri as a tuple
@@ -105,6 +106,7 @@ def resolve_uri(uri, path='..'):
         print("is a directory", path_to_root)
         return build_file_structre_html(path_to_root), file_type
     else:
+        raise OSError
 
 
 def send_response(conn, response):
@@ -120,7 +122,7 @@ def server():
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP,)
         print("\nserver: ", server_socket)
 
-        address = ('127.0.0.1', 5000)
+        address = ('127.0.0.1', 5001)
         server_socket.bind(address)
         print("\nserver: ", server_socket)
 
