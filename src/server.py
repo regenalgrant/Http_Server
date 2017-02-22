@@ -85,6 +85,14 @@ def response_error(req_type):
     return response
 
 
+def send_response(conn, response):
+    for c in response:
+        if isinstance(c, str):
+            conn.send(c.encode('utf-8'))
+        else:
+            conn.send(c)
+
+
 def server():
     try:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP,)
@@ -101,45 +109,39 @@ def server():
 
         try:
             while True:
+                print('Back to listening for request')
                 conn, addr = server_socket.accept()
+                try:
+                    while True:
+                        client_request = handle_listening(conn)# socket listening
+                        print(client_request)
 
 # -----------------Buffered message recieve ------
 
-                msg_response = response_template()
-                buffer_length = 4096
-                byte_msg = b''
-                while True:
-                    part = conn.recv(buffer_length)
-                    byte_msg += part
-
-                if len(part) < buffer_length:
-                    try:
-                        filepath = parse_request(byte_msg.decode('utf-8'))
-                    except NameError:
-                        pass
-                    except TypeError:
-                        pass
-                    except ValueError:
-                        pass
-                    print("filepath: ", filepath)
-
-                    if "/" in filepath:
-                        msg_response[0] = response_check("200")
-                        msg_response[3] = "Content-length: " + str(len(msg_response[4])) + "\r\n\r\n"
-                        msg_response[4] = filepath
-                        sys.stdout.write(msg_response[4])
-                    else:
-                        msg_response[0] = response_check(filepath)
-                        msg_response[3] = "Content-length: " + str(len(msg_response[4])) + "\r\n\r\n"
-
-                    for c in msg_response:
-                        conn.send(c.encode('utf-8'))
+                        try:
+                            uri = parse_request(client_request)
+                            print('parsed uri: ', uri)
+                        except ValueError:
+                            client_response = response_err("400")
+                        except TypeError:
+                            client_response = response_err("505")
+                        except NameError:
+                            client_response = response_err("405")
+                        try:
+                            body, file_type = resolve_uri(uri)
+                            print("body :", body)
+                            print("file_type :", file_type)
+                            client_response = response_ok(body, file_type)
+                        except OSError:
+                            client_response = response_err("404")
+                        send_response(conn, client_response)# Send the message
+                        break
+                finally:
+                    conn.close()
 
 #------------------stop listening-----------------
-                    break
-            conn.close()
 
-        except KeyboardInterrupt:
+        except KeyboardInterrupt: #--Client ctrl+D to disconnect
             if conn is not None:
                 conn.close()
             print('connection closed')
@@ -148,8 +150,5 @@ def server():
             print('server closed')
 
 
-
-    if __name__ == '__main__':
-        server()
-
-#--------------create Client ctrl+D to disconnect-----
+if __name__ == '__main__':
+    server()
