@@ -53,14 +53,12 @@ def parse_request(request):
             if 'Host: localhost:' in split_request[1]:
                 return request_list[1]
             else:
-                raise ValueError
-#------------------400--------------------------
+                raise ValueError #400
         else:
-            raise TypeError
-#------------------505--------------------------
+            raise TypeError # 505
     else:
-        raise NameError
-#------------------405--------------------------
+        raise NameError # 405
+
 
 def handle_listening(conn):
     buffer_length = 4096
