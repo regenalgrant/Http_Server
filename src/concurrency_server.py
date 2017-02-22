@@ -53,3 +53,16 @@ def parse_request(request):
             raise TypeError # 505
     else:
         raise NameError # 405
+
+
+def handle_listening(conn):
+    buffer_length = 4096
+    byte_msg = b''
+    decoded_msg = ""
+    while True:
+        part = conn.recv(buffer_length)
+        byte_msg += part
+        if len(part) < buffer_length:
+            decoded_msg = byte_msg.decode('utf-8')
+            break
+    return decoded_msg
