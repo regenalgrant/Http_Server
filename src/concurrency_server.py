@@ -81,3 +81,33 @@ def response_err(req_type):
     response[0] = response_check(req_type)
     response[4] = response_check(req_type)
     return response
+
+
+def resolve_uri(uri, path='..'):
+    """body and type based on uri as a tuple."""
+    path_to_root = os.path.join(path, 'webroot', uri[1:])
+    print("path to root: ", path_to_root)
+    file_type = ""
+    if os.path.isfile(path_to_root):
+        print("is a file")
+        filepath = io.open(path_to_root, 'rb')
+        print("filepath :", filepath)
+        body = filepath.read()
+        print("body", body)
+        file_type = mimetypes.guess_type(uri)
+        print("file_type :", file_type[0])
+        filepath.close()
+        return body, file_type[0]
+    elif os.path.isdir(path_to_root):
+        print("is a directory", path_to_root)
+        return build_file_structre_html(path_to_root), file_type
+    else:
+        raise OSError
+
+
+def send_response(conn, response):
+    for c in response:
+        if isinstance(c, str):
+            conn.send(c.encode('utf-8'))
+        else:
+            conn.send(c)

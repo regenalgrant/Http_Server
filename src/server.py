@@ -86,9 +86,7 @@ def response_err(req_type):
 
 
 def resolve_uri(uri, path='..'):
-    """
-    returns a body and type based on uri as a tuple
-    """
+    """body and type based on uri as a tuple."""
     path_to_root = os.path.join(path, 'webroot', uri[1:])
     print("path to root: ", path_to_root)
     file_type = ""
