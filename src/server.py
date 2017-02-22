@@ -1,10 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from collections import OrderedDict
 
 import socket
 import email.utils
-import sys
+import mimetypes
+import io
+import os
+
+
+def build_file_structre_html(directory):
+    print(directory)
+    body = "<!DOCTYPE html>\r\n<html>\r\n<ul>\r\n<body>\r\n<h1>Code Fellows</h1>\r\n"
+    for item in os.listdir(directory):
+        print(item)
+        if os.path.isdir(os.path.join(directory, item)):
+            body += "<li><a href=\"{}/\">{}</a></li>\r\n".format(item, item)
+        else:
+            body += "<li><a href=\"{}\">{}</a></li>\r\n".format(item, item)
+    body += "</ul>\r\n</body>\r\n</html>"
+    return body
 
 
 def response_template():
@@ -12,7 +26,7 @@ def response_template():
             u"" + str("Date: " + email.utils.formatdate(usegmt=True) + "\r\n"),
             u"Content-type: text/html; charset=utf-8\r\n",
             u"Content-length: \r\n\r\n",
-            b"Body: "]
+            u"Body: "]
 
 
 def response_check(error):
@@ -35,25 +49,40 @@ def parse_request(request):
                 return request_list[1]
             else:
                 raise ValueError
+#------------------400--------------------------
         else:
             raise TypeError
+#------------------505--------------------------
     else:
         raise NameError
+#------------------405--------------------------
+
+def handle_listening(conn):
+    buffer_length = 4096
+    byte_msg = b''
+    decoded_msg = ""
+    while True:
+        part = conn.recv(buffer_length)
+        byte_msg += part
+        if len(part) < buffer_length:
+            decoded_msg = byte_msg.decode('utf-8')
+            break
+    return decoded_msg
 
 
-def response_ok():
-    return ["HTTP/1.1 200 OK\n",
-            str("Date: " + email.utils.formatdate(usegmt=True) + "\n"),
-            "Content-type: text/html; charset=utf-8\n",
-            "Content-length: \n\n",
-            "Body: "]
+def response_ok(body, req_type):
+    response = response_template()
+    response[0] = response_check("200")
+    response[2] = u"Content-type: " + req_type + "; charset=utf-8\r\n"
+    response[4] = body
+    return response
 
 
-def response_error():
-    return ["HTTP/1.1 500 Internal Server Error\n",
-            str("Date: " + email.utils.formatdate(usegmt=True) + "\n"),
-            "Content-type: text/html; charset=utf-8\n"
-            ]
+def response_error(req_type):
+    response = response_template()
+    response[0] = response_check(req_type)
+    response[4] = response_check(req_type)
+    return response
 
 
 def server():
@@ -120,7 +149,7 @@ def server():
 
 
 
-if __name__ == '__main__':
-    server()
+    if __name__ == '__main__':
+        server()
 
 #--------------create Client ctrl+D to disconnect-----

@@ -29,5 +29,5 @@ def client(message=test_message):
     return(buffered_message)
 
 
-if __name__ == '__main__':
-    client(sys.argv[1])
+    if __name__ == '__main__':
+        client(sys.argv[1])
