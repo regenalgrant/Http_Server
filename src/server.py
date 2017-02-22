@@ -172,5 +172,5 @@ def server():
             print('server closed')
 
 
-    if __name__ == '__main__':
-        server()
+if __name__ == '__main__':
+    server()

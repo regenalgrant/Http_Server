@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import pytest
+import sys
+import os
 
 
-# ----------the server has to work to test
+
+FAILED_MESSAGES = [
+    (u"SET / HTTP/1.1\r\nHost: localhost:5000", NameError),
+    (u"GET / HTTP/1.0\r\nHost: localhost:5000", TypeError),
+    (u"GET / HTTP/1.1\r\nNo Host", ValueError)
+]
+
 
 def test_response_template():
     from server import response_template
