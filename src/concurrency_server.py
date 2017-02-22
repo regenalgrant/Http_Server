@@ -19,9 +19,21 @@ def build_file_structre_html(directory):
     body += "</ul>\r\n</body>\r\n</html>"
     return body
 
+
 def response_template():
     return [u"",
             u"" + str("Date: " + email.utils.formatdate(usegmt=True) + "\r\n"),
             u"Content-type: text/html; charset=utf-8\r\n",
             u"Content-length: \r\n\r\n",
             u"Body: "]
+
+
+def response_check(error):
+    response_dict = {
+        "200": u"HTTP/1.1 200 OK\r\n",
+        "400": u"HTTP/1.1 400 Bad Request\r\n",
+        "404": u"HTTP/1.1 404 File Not Found\r\n",
+        "405": u"HTTP/1.1 405 Method Not Allowed\r\n",
+        "500": u"HTTP/1.1 500 Internal Server Error\r\n",
+        "505": u"HTTP/1.1 505 HTTP Version Not Supported\r\n",
+    }
