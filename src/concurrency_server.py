@@ -18,3 +18,10 @@ def build_file_structre_html(directory):
             body += "<li><a href=\"{}\">{}</a></li>\r\n".format(item, item)
     body += "</ul>\r\n</body>\r\n</html>"
     return body
+
+def response_template():
+    return [u"",
+            u"" + str("Date: " + email.utils.formatdate(usegmt=True) + "\r\n"),
+            u"Content-type: text/html; charset=utf-8\r\n",
+            u"Content-length: \r\n\r\n",
+            u"Body: "]
