@@ -66,3 +66,11 @@ def handle_listening(conn):
             decoded_msg = byte_msg.decode('utf-8')
             break
     return decoded_msg
+
+
+def response_ok(body, req_type):
+    response = response_template()
+    response[0] = response_check("200")
+    response[2] = u"Content-type: " + req_type + "; charset=utf-8\r\n"
+    response[4] = body
+    return response
