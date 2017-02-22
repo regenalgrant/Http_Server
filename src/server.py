@@ -75,6 +75,7 @@ def server():
                 conn, addr = server_socket.accept()
 
 # -----------------Buffered message recieve ------
+
                 msg_response = response_template()
                 buffer_length = 4096
                 byte_msg = b''
