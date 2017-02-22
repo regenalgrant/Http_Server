@@ -65,3 +65,23 @@ def test_parse_request(error, response):
 def test_parse_request_success(error, response):
     from server import parse_request
     assert parse_request(error) == response
+
+
+def test_response_ok():
+    from server import response_ok
+    response = response_ok('test text', 'text/html')
+    assert response[2] == 'Content-type: text/html; charset=utf-8\r\n'
+
+
+@pytest.mark.parametrize("error, resp", ERROR_RESPONSE)
+def test_response_err(error, resp):
+    from server import response_err
+    assert resp in response_err(error)
+
+
+@pytest.mark.parametrize("req, resp", URI_RESPONSE)
+def test_resolve_uri(req, resp):
+    from server import resolve_uri
+    body_type = resolve_uri(req, '')
+    assert resp[0] in body_type[0]
+    assert resp[1] == body_type[1]
